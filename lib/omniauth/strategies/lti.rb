@@ -56,7 +56,10 @@ module OmniAuth
       end
 
       def lookup(field, default = nil)
-        @consumer[field.to_s].present? ? @tp.send(@consumer[field.to_s]) : default
+        result = default unless @consumer[field.to_s].present?
+        result ||= @tp.send(@consumer[field.to_s]) rescue nil
+        result ||= @tp.custom_params[@consumer[field.to_s].to_s] rescue nil
+        result
       end
     end
   end
